@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/iamYole/gostripe/internal/env"
 )
 
 const version = "1.0.0"
@@ -51,8 +53,11 @@ func main() {
 
 	flag.Parse()
 
-	cfg.stripe.key = os.Getenv("STRIPE_KEY")
-	cfg.stripe.secret = os.Getenv("STRIPE_SECRET")
+	cfg.stripe.key = env.GetString("STRIPE_KEY", "N/A")
+	cfg.stripe.secret = env.GetString("STRIPE_SECRET", "")
+
+	// cfg.stripe.key = os.Getenv("STRIPE_KEY")
+	// cfg.stripe.secret = os.Getenv("STRIPE_SECRET")
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)

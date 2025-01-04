@@ -1,2 +1,4 @@
 .air.toml
 Makefile
+.envrc
+dist/gostripe

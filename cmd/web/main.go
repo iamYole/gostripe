@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/iamYole/gostripe/internal/env"
 )
 
 const version = "1.0.0"
@@ -43,6 +45,7 @@ func (app *application) serve() error {
 		ReadHeaderTimeout: 5 * time.Second,
 		WriteTimeout:      5 * time.Second,
 	}
+	//app.infoLog.Printf("hey %s", app.config.stripe.key)
 	app.infoLog.Printf("Starting HTTP server in %s mode on port %d", app.config.env, app.config.port)
 
 	return srv.ListenAndServe()
@@ -56,8 +59,10 @@ func main() {
 
 	flag.Parse()
 
-	cfg.stripe.key = os.Getenv("STRIPE_KEY")
-	cfg.stripe.secret = os.Getenv("STRIPE_SECRET")
+	//cfg.stripe.key = os.Getenv("STRIPE_KEY")
+	//cfg.stripe.secret = os.Getenv("STRIPE_SECRET")
+	cfg.stripe.key = env.GetString("STRIPE_KEY", "N/A")
+	cfg.stripe.secret = env.GetString("STRIPE_SECRET", "")
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)

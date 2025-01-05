@@ -2,3 +2,4 @@
 Makefile
 .envrc
 dist/gostripe
+bin/

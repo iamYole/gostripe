@@ -60,8 +60,6 @@ func main() {
 
 	flag.Parse()
 
-	//cfg.stripe.key = os.Getenv("STRIPE_KEY")
-	//cfg.stripe.secret = os.Getenv("STRIPE_SECRET")
 	cfg.stripe.key = env.GetString("STRIPE_KEY", "N/A")
 	cfg.stripe.secret = env.GetString("STRIPE_SECRET", "")
 	cfg.db.dsn = env.GetString("DSN", "DSN")

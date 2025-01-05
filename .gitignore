@@ -3,3 +3,4 @@ Makefile
 .envrc
 dist/gostripe
 bin/
+database.yml

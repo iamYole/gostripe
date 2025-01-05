@@ -1,0 +1,1 @@
+add_column("Widgets", "image", "string",{"default":""})

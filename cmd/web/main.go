@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/iamYole/gostripe/internal/driver"
 	"github.com/iamYole/gostripe/internal/env"
 )
 
@@ -63,9 +64,18 @@ func main() {
 	//cfg.stripe.secret = os.Getenv("STRIPE_SECRET")
 	cfg.stripe.key = env.GetString("STRIPE_KEY", "N/A")
 	cfg.stripe.secret = env.GetString("STRIPE_SECRET", "")
+	cfg.db.dsn = env.GetString("DSN", "DSN")
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	conn, err := driver.OpenDB(cfg.db.dsn)
+	if err != nil {
+		errorLog.Fatal(err)
+	} else {
+		infoLog.Println("Database connection established !!!")
+	}
+	defer conn.Close()
 
 	tc := make(map[string]*template.Template)
 

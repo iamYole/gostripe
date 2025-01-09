@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"flag"
 	"fmt"
 	"html/template"
@@ -9,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/iamYole/gostripe/internal/driver"
 	"github.com/iamYole/gostripe/internal/env"
 	"github.com/iamYole/gostripe/internal/models"
@@ -16,6 +18,8 @@ import (
 
 const version = "1.0.0"
 const cssVersion = "1"
+
+var session *scs.SessionManager
 
 type config struct {
 	port int
@@ -37,6 +41,7 @@ type application struct {
 	templateCache map[string]*template.Template
 	version       string
 	DB            models.DBModel
+	Session       *scs.SessionManager
 }
 
 func (app *application) serve() error {
@@ -55,6 +60,7 @@ func (app *application) serve() error {
 }
 
 func main() {
+	gob.Register(TransactionData{})
 	var cfg config
 	flag.IntVar(&cfg.port, "port", 4000, "Server port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application environment {development|production}")
@@ -77,6 +83,10 @@ func main() {
 	}
 	defer conn.Close()
 
+	//setup sessiom
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
+
 	tc := make(map[string]*template.Template)
 
 	app := &application{
@@ -85,7 +95,8 @@ func main() {
 		errorLog:      errorLog,
 		templateCache: tc,
 		version:       version,
-		DB: models.DBModel{DB: conn},
+		DB:            models.DBModel{DB: conn},
+		Session:       session,
 	}
 
 	if err := app.serve(); err != nil {
